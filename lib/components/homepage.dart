@@ -2,16 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_flutter/main.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  ConsumerState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends ConsumerState<HomePage> {
+
   @override
   Widget build(BuildContext context) {
+    int data = ref.watch(counterProvider);
+    ref.listen(counterProvider,((prev,next){
+      if(next == 7){
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Value Reached"),),);
+      }
+       if(next == 0){
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Value Resetted"),),);
+      }
+    }));
     return Scaffold(
       appBar: AppBar(
         title: const Text("Riverpod"),
@@ -20,39 +30,24 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Consumer(
-              builder: (context, ref, child) {
-                int data = ref.watch(counterProvider);
-                return Text(data.toString());
+            Text(data.toString()),
+            const SizedBox(
+              height: 30,
+            ),
+            ElevatedButton(
+              onPressed: () {
+                ref.read(counterProvider.notifier).update((state) => state + 1);
               },
+              child: const Text("Counter"),
             ),
             const SizedBox(
               height: 30,
             ),
-            Consumer(
-              builder: (context, ref, child) {
-                return ElevatedButton(
-                  onPressed: () {
-                    ref
-                        .read(counterProvider.notifier)
-                        .update((state) => state + 1);
-                  },
-                  child: const Text("Counter"),
-                );
+            ElevatedButton(
+              onPressed: () {
+                ref.invalidate(counterProvider);
               },
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            Consumer(
-              builder: (context, ref, child) {
-                return ElevatedButton(
-                  onPressed: () {
-                    ref.invalidate(counterProvider);
-                  },
-                  child: const Text("Reset"),
-                );
-              },
+              child: const Text("Reset"),
             ),
           ],
         ),
@@ -60,36 +55,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-// class HomePage extends ConsumerStatefulWidget {
-//   const HomePage({super.key});
-
-//   @override
-//   ConsumerState<ConsumerStatefulWidget> createState() => _HomePageState();
-// }
-
-// class _HomePageState extends ConsumerState<HomePage> {
-
-//   @override
-//   void initState() {
-//     super.initState();
-//     // if (kDebugMode) {
-//     //   print("App Started...");
-//     //   Map<dynamic,dynamic> dataPer = ref.read(keyValueProvider);
-//     //   print(dataPer.toString());
-//     // }
-//   }
-
-//   @override
-//   Widget build(BuildContext context) {
-//     Map<dynamic,dynamic> data = ref.watch(keyValueProvider);
-//     return Scaffold(
-//       appBar: AppBar(
-//         title: const Text("Riverpod Flutter"),
-//       ),
-//       body:  Center(
-//         child: Text(data.toString()),
-//       ),
-//     );
-//   }
-// }
