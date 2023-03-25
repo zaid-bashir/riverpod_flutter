@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_flutter/provider/counter_provider.dart';
+import 'package:riverpod_flutter/model/usermodel.dart';
+import 'package:riverpod_flutter/service/api_service.dart';
 
 import 'components/homepage.dart';
 
-final counterProvider = StateNotifierProvider<CounterProvider,int>((ref) => CounterProvider());
+final apiProvider = Provider<ApiService>((ref){ return ApiService();});
+
+final userDataProvider = FutureProvider<List<UserModel>>((ref){
+  return ref.read(apiProvider).getUsers();
+});
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));

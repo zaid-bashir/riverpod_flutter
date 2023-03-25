@@ -1,7 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../main.dart';
+import 'package:riverpod_flutter/main.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -14,43 +13,26 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final counterProviderObj = ref.watch(counterProvider);
-    ref.listen(counterProvider, (previous, next) {
-      if(next == 4){
-        if (kDebugMode) {
-          print("Hello");
-        }
-      }
-     });
+    final listOfUsers = ref.watch(userDataProvider);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Riverpod"),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(counterProviderObj.toString()),
-            const SizedBox(
-              height: 30,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                ref.read(counterProvider.notifier).increment();
-              },
-              child: const Text("Counter"),
-            ),
-            const SizedBox(
-              height: 30,
-            ),
-            ElevatedButton(
-              onPressed: () {
-                ref.invalidate(counterProvider);
-              },
-              child: const Text("Reset"),
-            ),
-          ],
-        ),
+        child: listOfUsers.when(data: (users){
+          return ListView.builder(itemBuilder: (context,index){
+            return ListTile(
+              title: Text("${users[index].firstName!} ${users[index].firstName!}"),
+              subtitle: Text(users[index].email!),
+              leading: CircleAvatar(backgroundImage: NetworkImage(users[index].avatar!)),
+            );
+          },itemCount: users.length,);
+        }, error: (error, stackTrace) {
+          return AlertDialog(
+            title: Text(error.toString()),
+            content: Text(stackTrace.toString()),
+          );
+        }, loading: (){return const Center(child: CircularProgressIndicator(),);}),
       ),
     );
   }
