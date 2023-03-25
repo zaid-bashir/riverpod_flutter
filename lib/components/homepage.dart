@@ -1,6 +1,7 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_flutter/main.dart';
+import '../main.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});
@@ -13,15 +14,14 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    int data = ref.watch(counterProvider);
-    ref.listen(counterProvider,((prev,next){
-      if(next == 7){
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Value Reached"),),);
+    final counterProviderObj = ref.watch(counterProvider);
+    ref.listen(counterProvider, (previous, next) {
+      if(next == 4){
+        if (kDebugMode) {
+          print("Hello");
+        }
       }
-       if(next == 0){
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Value Resetted"),),);
-      }
-    }));
+     });
     return Scaffold(
       appBar: AppBar(
         title: const Text("Riverpod"),
@@ -30,13 +30,13 @@ class _HomePageState extends ConsumerState<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(data.toString()),
+            Text(counterProviderObj.toString()),
             const SizedBox(
               height: 30,
             ),
             ElevatedButton(
               onPressed: () {
-                ref.read(counterProvider.notifier).update((state) => state + 1);
+                ref.read(counterProvider.notifier).increment();
               },
               child: const Text("Counter"),
             ),

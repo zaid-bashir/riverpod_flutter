@@ -1,20 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_flutter/provider/counter_provider.dart';
 
 import 'components/homepage.dart';
 
-final keyValueProvider = Provider<Map>((ref) {
-  return {
-    "Name": "Zaid Bashir",
-    "Age": 23,
-    "Address": "Sopore J&K",
-    "Profession": "SDE1 @ TrueMedix"
-  };
-});
-
-final counterProvider = StateProvider<int>((ref) {
-  return 0;
-});
+final counterProvider = StateNotifierProvider<CounterProvider,int>((ref) => CounterProvider());
 
 void main() {
   runApp(const ProviderScope(child: MyApp()));
