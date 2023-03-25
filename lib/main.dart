@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:riverpod_flutter/model/usermodel.dart';
-import 'package:riverpod_flutter/service/api_service.dart';
-
 import 'components/homepage.dart';
 
-final apiProvider = Provider<ApiService>((ref){ return ApiService();});
-
-final userDataProvider = FutureProvider<List<UserModel>>((ref){
-  return ref.read(apiProvider).getUsers();
+final streamProvider = StreamProvider<int>((ref){
+  return Stream.periodic(const Duration(seconds: 1),((computationCount){
+    return computationCount;
+  }));
 });
 
 void main() {
